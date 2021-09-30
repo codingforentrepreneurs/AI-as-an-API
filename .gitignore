@@ -5,6 +5,7 @@ include
 lib
 share
 etc
+*.pkl
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
