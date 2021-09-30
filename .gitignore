@@ -1,3 +1,5 @@
+datasets/imports/
+datasets/zips/
 bin
 include
 lib
