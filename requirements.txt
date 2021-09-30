@@ -1,2 +1,4 @@
 jupyter
 pandas
+scikit-learn
+tensorflow
