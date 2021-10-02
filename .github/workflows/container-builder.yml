@@ -20,16 +20,27 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 1500
       - name: Build and push Python Web App
         id: app_builder
         uses: docker/build-push-action@v2
         with:
           push: true
           context: .
-          tags: codingforentrepreneurs/ai-as-an-api
+          tags: |
+            codingforentrepreneurs/ai-as-an-api
+            registry.digitalocean.com/codingforentrepreneurs2:latest
           build-args: |
               AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
               AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
               BUCKET_NAME=${{ secrets.BUCKET_NAME }}
               ENDPOINT_URL=${{ secrets.ENDPOINT_URL }}
               REGION_NAME=${{ secrets.REGION_NAME }}
+
+
+
