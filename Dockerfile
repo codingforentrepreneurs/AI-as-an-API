@@ -1,4 +1,5 @@
-FROM python:3.9-slim
+# FROM python:3.9-slim
+FROM tensorflow/tensorflow
 
 ARG AWS_ACCESS_KEY_ID
 ENV AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
@@ -15,7 +16,7 @@ ENV ENDPOINT_URL=${ENDPOINT_URL}
 ARG REGION_NAME
 ENV REGION_NAME=${REGION_NAME}
 
-COPY app app
+COPY ./app ./app/app/
 COPY requirements-prod.txt /app/requirements.txt
 COPY ./entrypoint.sh ./app/entrypoint.sh
 COPY ./pipelines /app/pipelines
