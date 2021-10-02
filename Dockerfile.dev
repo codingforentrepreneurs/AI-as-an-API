@@ -1,4 +1,7 @@
-FROM codingforentrepreneurs/python:3.9-webapp-cassandra
+# FROM codingforentrepreneurs/python:3.9-webapp-cassandra
+FROM tensorflow/tensorflow
+
+FROM python:3.9-slim
 
 # Only dev
 COPY .env /app/.env
