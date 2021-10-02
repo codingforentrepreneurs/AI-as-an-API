@@ -4,3 +4,7 @@ scikit-learn
 tensorflow
 boto3
 pypyr
+python-dotenv
+fastapi
+uvicorn
+gunicorn
