@@ -16,7 +16,7 @@ ARG REGION_NAME
 ENV REGION_NAME=${REGION_NAME}
 
 COPY app app
-COPY requirements.txt /app/requirements.txt
+COPY requirements-prod.txt /app/requirements.txt
 COPY ./entrypoint.sh ./app/entrypoint.sh
 COPY ./pipelines /app/pipelines
 
