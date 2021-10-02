@@ -27,19 +27,19 @@ jobs:
           access_key = ${{ secrets.AWS_ACCESS_KEY_ID }}
           secret_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           EOF
-        - name: Create Terraform Backend
-          run: |
-            cat << EOF > iac/terraform.tfvars
-            linode_api_token="${{ secrets.LINODE_API_TOKEN }"
-            root_user_pw="${{ secrets.LINODE_INSTANCE_USER_PW }}"
-            node_count="${{ secrets.TERRAFORM_NODE_COUNT }}"
-            git_repo="${{ secrets.TERRAFORM_GIT_REPO }}"
-            EOF
-        - name: Terraform Init
-          run: terraform -chdir=./iac init
-        - name: Run Terraform Plan
-          id: plan
-          run: terraform -chdir=./iac plan -no-color
-        - run: echo ${{ steps.plan.outputs.stdout }}
-        - run: echo ${{ steps.plan.outputs.stderr }}
-        - run: echo ${{ steps.plan.outputs.exitcode }}
+      - name: Create Terraform Backend
+        run: |
+          cat << EOF > iac/terraform.tfvars
+          linode_api_token="${{ secrets.LINODE_API_TOKEN }"
+          root_user_pw="${{ secrets.LINODE_INSTANCE_USER_PW }}"
+          node_count="${{ secrets.TERRAFORM_NODE_COUNT }}"
+          git_repo="${{ secrets.TERRAFORM_GIT_REPO }}"
+          EOF
+      - name: Terraform Init
+        run: terraform -chdir=./iac init
+      - name: Run Terraform Plan
+        id: plan
+        run: terraform -chdir=./iac plan -no-color
+      - run: echo ${{ steps.plan.outputs.stdout }}
+      - run: echo ${{ steps.plan.outputs.stderr }}
+      - run: echo ${{ steps.plan.outputs.exitcode }}
