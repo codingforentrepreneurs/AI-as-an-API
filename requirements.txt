@@ -2,3 +2,5 @@ jupyter
 pandas
 scikit-learn
 tensorflow
+boto3
+pypyr
