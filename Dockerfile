@@ -1,4 +1,4 @@
-FROM codingforentrepreneurs/python:3.9-webapp-cassandra
+FROM python:3.9-slim
 
 COPY app app
 COPY requirements.txt /app/requirements.txt
