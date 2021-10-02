@@ -1,6 +1,0 @@
-boto3
-pypyr
-python-dotenv
-fastapi
-uvicorn
-gunicorn
