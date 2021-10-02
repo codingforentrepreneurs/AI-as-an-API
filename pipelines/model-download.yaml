@@ -1,0 +1,36 @@
+context_parser: pypyr.parser.keyvaluepairs
+steps:
+  - name: pypyr.steps.contextsetf
+    comment: set some arbitrary values in context
+    in:
+      contextSetf:
+        dest_dir: models/spam-sms
+        file_keys: [
+            'exports/spam-sms/spam-model.h5', 
+            'exports/spam-sms/spam-classifer-tokenizer.json', 
+            'exports/spam-sms/spam-classifer-metadata.json'
+          ]
+  - name: pypyr.steps.py
+    comment: Run python code to download the above file keys.
+    in:
+      py: |
+          import os
+          import pathlib
+          import boto3
+          from dotenv import load_dotenv
+          load_dotenv()
+          session = boto3.session.Session()
+          bucket_name = os.environ.get('BUCKET_NAME')
+          region_name = os.environ.get('REGION_NAME')
+          endpoint_url = os.environ.get('ENDPOINT_URL') or None
+          if not os.environ.get('AWS_ACCESS_KEY_ID') or not os.environ.get('AWS_SECRET_ACCESS_KEY'):
+            raise Exception("AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are required environment variables.")
+          if not bucket_name or not region_name:
+            raise Exception("BUCKET_NAME and REGION_NAME are required environment variables.")
+          client = session.client('s3', region_name=region_name, endpoint_url=endpoint_url)
+          for x in file_keys:
+            dest_path = pathlib.Path(dest_dir)
+            if not dest_path.exists():
+              dest_path.mkdir(parents=True, exist_ok=True)
+            download_path = dest_path / pathlib.Path(x).name
+            client.download_file(bucket_name, x, str(download_path))
