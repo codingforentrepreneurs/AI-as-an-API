@@ -1,5 +1,6 @@
-# FROM python:3.9-slim
 FROM tensorflow/tensorflow
+
+FROM python:3.9-slim
 
 ARG AWS_ACCESS_KEY_ID
 ENV AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
