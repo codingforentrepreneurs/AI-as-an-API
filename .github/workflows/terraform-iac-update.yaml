@@ -46,7 +46,7 @@ jobs:
       - name: Terraform Init
         run: terraform -chdir=./iac init -backend-config=backend
       - name: Terraform Refresh
-        run: terraform -chdir=./iac refresh -backend-config=backend
+        run: terraform -chdir=./iac refresh
       - name: Update Instance 1
         run: terraform -chdir=./iac apply -auto-approve -replace="linode_instance.cfe_ai_instance[0]"
         continue-on-error: true
