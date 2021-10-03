@@ -1,0 +1,51 @@
+name: Update Infrastructure via Terraform
+
+on:
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.8
+      - name: Add dotenv
+        run: |
+          cat << EOF > .env
+          AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          BUCKET_NAME=${{ secrets.BUCKET_NAME }}
+          ENDPOINT_URL=${{ secrets.ENDPOINT_URL }}
+          REGION_NAME=${{ secrets.REGION_NAME }}
+          EOF
+      - name: Create Terraform Backend
+        run: |
+          cat << EOF > iac/backend
+          skip_credentials_validation = true
+          skip_region_validation = true
+          bucket = "cfe-ai-as-an-api"
+          key    = "ai-as-an-api.tfstate"
+          region = "${{ secrets.REGION_NAME }}"  
+          endpoint = "us-southeast-1.linodeobjects.com"
+          access_key = "${{ secrets.AWS_ACCESS_KEY_ID }}"
+          secret_key = "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+          EOF
+      - name: Create Terraform Backend
+        run: |
+          cat << EOF > iac/terraform.tfvars
+          linode_api_token="${{ secrets.LINODE_API_TOKEN }}"
+          root_user_pw="${{ secrets.LINODE_INSTANCE_USER_PW }}"
+          node_count="${{ secrets.TERRAFORM_NODE_COUNT }}"
+          git_repo="${{ secrets.TERRAFORM_GIT_REPO }}"
+          commit_id="${GITHUB_SHA::5}${{ github.run_attempt }}"
+          EOF
+      - name: Terraform Init
+        run: terraform -chdir=./iac init -backend-config=backend
+      - name: Apply Changes
+        run: terraform -chdir=./iac apply -auto-approve"
+      - name: Update Nodebalancer
+        run: terraform -chdir=./iac apply -auto-approve -replace="linode_instance.pycfeai"
