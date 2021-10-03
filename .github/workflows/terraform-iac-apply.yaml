@@ -45,7 +45,7 @@ jobs:
           EOF
       - name: Terraform Init
         run: terraform -chdir=./iac init -backend-config=backend
-      - name: Terraform Init
+      - name: Terraform Refresh
         run: terraform -chdir=./iac refresh -backend-config=backend
       - name: Apply Changes
         run: terraform -chdir=./iac apply -auto-approve
