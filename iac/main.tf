@@ -107,4 +107,5 @@ resource "linode_nodebalancer_node" "ai_nodeblanacer" {
     address = "${element(linode_instance.cfe_ai_instance.*.private_ip_address, count.index)}:80"
     label = "cfe-ai-nb-node-${count.index + 1}"
     weight = 50
+    mode = "accept"
 }
