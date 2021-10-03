@@ -1,4 +1,4 @@
-name: Update Infrastructure via Terraform
+name: Destroy Infrastructure via Terraform
 
 on:
   workflow_dispatch:
@@ -36,11 +36,5 @@ jobs:
           EOF
       - name: Terraform Init
         run: terraform -chdir=./iac init -backend-config=backend
-      - name: Update Instance 1
-        run: terraform -chdir=./iac apply -auto-approve -replace="linode_instance.cfe_ai_instance[0]"
-        continue-on-error: true
-      - name: Update Instance 2
-        run: terraform -chdir=./iac apply -auto-approve -replace="linode_instance.cfe_ai_instance[1]"
-        continue-on-error: true
-      - name: Update Nodebalancer
-        run: terraform -chdir=./iac apply -auto-approve -replace="linode_instance.pycfeai"
+      - name: Destroy Terraform Infrastrucure
+        run: terraform -chdir=./iac apply -destroy -auto-approve
