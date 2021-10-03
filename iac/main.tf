@@ -90,6 +90,9 @@ resource "linode_nodebalancer" "pycfeai" {
     label = "cfe-ai-as-api-nodebalancer"
     region = "us-east"
     client_conn_throttle = 20
+    depends_on = [
+        linode_instance.cfe_ai_instance
+    ]
 }
 
 resource "linode_nodebalancer_config" "pycfenbfig" {
