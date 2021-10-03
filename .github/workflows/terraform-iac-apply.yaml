@@ -46,6 +46,6 @@ jobs:
       - name: Terraform Init
         run: terraform -chdir=./iac init -backend-config=backend
       - name: Apply Changes
-        run: terraform -chdir=./iac apply -auto-approve"
+        run: terraform -chdir=./iac apply -auto-approve
       - name: Update Nodebalancer
         run: terraform -chdir=./iac apply -auto-approve -replace="linode_instance.pycfeai"
