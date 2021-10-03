@@ -17,13 +17,13 @@ provider "linode" {
 }
 
 
-resource "linode_instance" "ai-as-an-api" {
+resource "linode_instance" "cfe_ai_instance" {
         count = var.node_count
         image = "linode/ubuntu18.04"
-        label = "ai-as-an-api-${count.index + 1}"
+        label = "ai-as-an-api-${var.commit_id}-${count.index + 1}"
         group = "CFE-Learner"
         region = "us-east"
-        type = "g6-nanode-1"
+        type = "g6-standard-2"
         root_pass = var.root_user_pw
         tags = [ "cfe", "api",]
         private_ip = true
@@ -47,11 +47,22 @@ resource "linode_instance" "ai-as-an-api" {
                 password = "${var.root_user_pw}"
              }
              inline = [
-                "chmod +x /tmp/bootstrap.sh",
-                "/tmp/bootstrap.sh",
+                "chmod +x /tmp/bootstrap-docker.sh",
+                "/tmp/bootstrap-docker.sh",
                 "mkdir -p /var/www/",
                 "git clone ${var.git_repo} /var/www/"
              ]
+        }
+
+        provisioner "file" {
+            connection {
+                host     = "${self.ip_address}"
+                type     = "ssh"
+                user     = "root"
+                password = "${var.root_user_pw}"
+            }
+            source      = "${local.root_dir}/.env"
+            destination = "/var/www/.env"
         }
         
         provisioner "remote-exec" {
@@ -70,14 +81,14 @@ resource "linode_instance" "ai-as-an-api" {
         
 }
 
-resource "linode_nodebalancer" "ai-api-nb" {
-    label = "mynodebalancer"
+resource "linode_nodebalancer" "pycfeai" {
+    label = "cfe-ai-as-api-nodebalancer"
     region = "us-east"
     client_conn_throttle = 20
 }
 
-resource "linode_nodebalancer_config" "ai-api-nb-config" {
-    nodebalancer_id = linode_nodebalancer.ai-api-nb.id
+resource "linode_nodebalancer_config" "pycfenbfig" {
+    nodebalancer_id = linode_nodebalancer.pycfeai.id
     port = 80
     protocol = "http"
     check = "http"
@@ -89,11 +100,11 @@ resource "linode_nodebalancer_config" "ai-api-nb-config" {
     algorithm = "source"
 }
 
-resource "linode_nodebalancer_node" "pynode" {
+resource "linode_nodebalancer_node" "ai_nodeblanacer" {
     count = var.node_count
-    nodebalancer_id = linode_nodebalancer.ai-api-nb.id
-    config_id = linode_nodebalancer_config.ai-api-nb-config.id
-    address = "${element(linode_instance.ai-as-an-api.*.private_ip_address, count.index)}:80"
-    label = "ai-api-nb-node-${count.index + 1}"
+    nodebalancer_id = linode_nodebalancer.pycfeai.id
+    config_id = linode_nodebalancer_config.pycfenbfig.id
+    address = "${element(linode_instance.cfe_ai_instance.*.private_ip_address, count.index)}:80"
+    label = "cfe-ai-nb-node-${count.index + 1}"
     weight = 50
 }

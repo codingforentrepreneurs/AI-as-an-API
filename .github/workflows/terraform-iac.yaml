@@ -1,10 +1,4 @@
-name: Docker Container Image Builder
-
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
-
+name: Enable Infrastructure via Terraform
 jobs:
   terraform:
     runs-on: ubuntu-latest
@@ -21,7 +15,7 @@ jobs:
           skip_credentials_validation = true
           skip_region_validation = true
           bucket = "cfe-ai-as-an-api"
-          key    = "iac/ai-as-an-api.tfstate"
+          key    = "ai-as-an-api.tfstate"
           region = "${{ secrets.REGION_NAME }}"  
           endpoint = "us-southeast-1.linodeobjects.com"
           access_key = "${{ secrets.AWS_ACCESS_KEY_ID }}"
@@ -34,12 +28,24 @@ jobs:
           root_user_pw="${{ secrets.LINODE_INSTANCE_USER_PW }}"
           node_count="${{ secrets.TERRAFORM_NODE_COUNT }}"
           git_repo="${{ secrets.TERRAFORM_GIT_REPO }}"
+          commit_id="${GITHUB_SHA::6}"
           EOF
       - name: Terraform Init
         run: terraform -chdir=./iac init -backend-config=backend
-      - name: Run Terraform Plan
-        id: plan
-        run: terraform -chdir=./iac plan -no-color
-      - run: echo ${{ steps.plan.outputs.stdout }}
-      - run: echo ${{ steps.plan.outputs.stderr }}
-      - run: echo ${{ steps.plan.outputs.exitcode }}
+      - name: Apply Terraform Infrastrucure
+        if: ${{ secrets.TERRAFORM_DESTROY != '1' }}
+        run: terraform -chdir=./iac apply -auto-approve
+      - name: Destroy Terraform Infrastrucure
+        if: ${{ secrets.TERRAFORM_DESTROY != '1' }}
+        run: terraform -chdir=./iac apply -destroy -auto-approve
+      - name: Update Instance 1
+        if: ${{ secrets.TERRAFORM_UPDATE == '1' }}
+        run: terraform -chdir=./iac apply -auto-approve -replace="linode_instance.cfe_ai_instance[0]"
+        continue-on-error: true
+      - name: Update Instance 2
+        if: ${{ secrets.TERRAFORM_UPDATE == '1' }}
+        run: terraform -chdir=./iac apply -auto-approve -replace="linode_instance.cfe_ai_instance[1]"
+        continue-on-error: true
+      - name: Update Nodebalancer
+        if: ${{ secrets.TERRAFORM_UPDATE == '1' }}
+        run: terraform -chdir=./iac apply -auto-approve -replace="linode_instance.pycfeai"
