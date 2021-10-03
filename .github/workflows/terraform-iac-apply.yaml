@@ -46,7 +46,7 @@ jobs:
       - name: Terraform Init
         run: terraform -chdir=./iac init -backend-config=backend
       - name: Terraform Refresh
-        run: terraform -chdir=./iac refresh -backend-config=backend
+        run: terraform -chdir=./iac refresh
       - name: Apply Changes
         run: terraform -chdir=./iac apply -auto-approve
       - name: Update Nodebalancer
