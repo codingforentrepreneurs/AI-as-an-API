@@ -1,4 +1,4 @@
-name: Update Infrastructure via Terraform
+name: Apply Infrastructure via Terraform
 
 on:
   workflow_dispatch:
