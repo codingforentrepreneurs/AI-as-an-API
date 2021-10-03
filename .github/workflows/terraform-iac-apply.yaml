@@ -45,6 +45,9 @@ jobs:
           EOF
       - name: Terraform Init
         run: terraform -chdir=./iac init -backend-config=backend
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
       - name: Terraform Refresh
         run: terraform -chdir=./iac refresh
       - name: Apply Changes
