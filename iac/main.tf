@@ -110,7 +110,7 @@ resource "linode_nodebalancer_node" "ai_nodeblanacer" {
     nodebalancer_id = linode_nodebalancer.pycfeai.id
     config_id = linode_nodebalancer_config.pycfenbfig.id
     address = "${element(linode_instance.cfe_ai_instance.*.private_ip_address, count.index)}:80"
-    label = "cfe-ai-nb-node-${count.index + 1}"
+    label = "cfe-ai-nb-node-${var.commit_id}-${count.index + 1}"
     weight = 50
     mode = "accept"
 }
