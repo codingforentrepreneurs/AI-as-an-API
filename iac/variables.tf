@@ -2,6 +2,8 @@ variable "linode_api_token" {
   sensitive   = true
 }
 
+variable "commit_id" {}
+
 variable "root_user_pw" {
   sensitive   = true
 }
