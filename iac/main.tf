@@ -28,6 +28,11 @@ resource "linode_instance" "cfe_ai_instance" {
         tags = [ "cfe", "api",]
         private_ip = true
 
+        lifecycle {
+            create_before_destroy = true
+        }
+        
+
         provisioner "file" {
             connection {
                 host     = "${self.ip_address}"
