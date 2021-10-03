@@ -41,7 +41,7 @@ jobs:
           root_user_pw="${{ secrets.LINODE_INSTANCE_USER_PW }}"
           node_count="${{ secrets.TERRAFORM_NODE_COUNT }}"
           git_repo="${{ secrets.TERRAFORM_GIT_REPO }}"
-          commit_id="${GITHUB_SHA::6}"
+          commit_id="${GITHUB_SHA::5}${{ github.run_attempt }}"
           EOF
       - name: Terraform Init
         run: terraform -chdir=./iac init -backend-config=backend
