@@ -1,4 +1,5 @@
 cassandra-driver
+jupyter
 pandas
 scikit-learn
 tensorflow
