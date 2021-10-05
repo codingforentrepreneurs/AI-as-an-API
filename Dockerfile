@@ -7,6 +7,7 @@ COPY requirements.txt /app/requirements.txt
 COPY ./entrypoint.sh ./app/entrypoint.sh
 COPY ./decrypt.sh ./app/decrypt.sh
 COPY ./pipelines /app/pipelines
+COPY .gitattributes ./app/.gitattributes
 
 WORKDIR /app
 
